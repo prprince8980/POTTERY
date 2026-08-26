@@ -7,6 +7,7 @@ const API = import.meta.env.VITE_API_URL
 const emptyRegister = { name: '', email: '', mobile: '', address: '', username: '', password: '', confirmPassword: '', location: null }
 
 async function request(path, options = {}) {
+  if (!API) throw new Error('VITE_API_URL is not configured. Add it to the Vercel frontend environment variables and redeploy.')
   let response
   try { response = await fetch(`${API}${path}`, { headers: { 'Content-Type': 'application/json', ...(options.token ? { Authorization: `Bearer ${options.token}` } : {}) }, ...options }) } catch { throw new Error(`Cannot connect to the API at ${API}. Start the server with "npm run start --prefix server".`) }
   let data
