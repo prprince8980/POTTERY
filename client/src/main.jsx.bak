@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { ArrowRight, Check, Compass, Home, LogOut, MapPin, Menu, Package, Plus, UserRound, X } from 'lucide-react'
 import './styles.css'
 
-const API = import.meta.env.VITE_API_URL || 'http://localhost:4000/api'
+const API = import.meta.env.VITE_API_URL
 const emptyRegister = { name: '', email: '', mobile: '', address: '', username: '', password: '', confirmPassword: '', location: null }
 
 async function request(path, options = {}) {
