@@ -73,6 +73,7 @@ async function refreshProductRating(productId) {
 }
 const reviewView = review => ({ _id: review._id, productId: review.productId, userId: review.userId, customer: review.userId?.name || 'Customer', product: review.productId?.name, rating: review.rating, title: review.title, comment: review.comment, isVerifiedPurchase: review.isVerifiedPurchase, status: review.status, createdAt: review.createdAt, updatedAt: review.updatedAt })
 
+app.get('/', (req, res) => res.json({ message: 'API is running' }))
 app.get('/api/health', (req, res) => res.json({ ok: true }))
 app.post('/api/admin/login', (req, res) => {
   const bypassEnabled = process.env.ADMIN_BYPASS === 'true'
@@ -203,6 +204,12 @@ app.put('/api/auth/me', auth, async (req, res) => {
     res.json({ user: publicUser(user) })
   } catch (err) { res.status(400).json({ message: 'Could not update your profile.' }) }
 })
+app.use((req, res) => res.status(404).json({ success: false, message: 'Route not found' }))
 
 if (!process.env.MONGODB_URI || !process.env.JWT_SECRET) console.warn('Set MONGODB_URI and JWT_SECRET in server/.env before starting the API.')
-else mongoose.connect(process.env.MONGODB_URI).then(() => app.listen(port, () => console.log(`API listening on http://localhost:${port}`))).catch(error => { console.error('MongoDB connection failed:', error.message); process.exit(1) })
+
+const mongoConnection = process.env.MONGODB_URI ? mongoose.connect(process.env.MONGODB_URI) : Promise.reject(new Error('MONGODB_URI is not configured.'))
+
+export { app, mongoConnection }
+
+if (!process.env.VERCEL) mongoConnection.then(() => app.listen(port, () => console.log(`API listening on http://localhost:${port}`))).catch(error => { console.error('MongoDB connection failed:', error.message); process.exit(1) })
