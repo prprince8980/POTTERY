@@ -11,9 +11,10 @@ const allowedOrigins = (process.env.CLIENT_ORIGIN || 'http://localhost:5173')
   .split(',')
   .map(origin => origin.trim())
   .filter(Boolean)
+const isVercelOrigin = origin => /^https:\/\/[a-z0-9-]+\.vercel\.app$/i.test(origin)
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) return callback(null, true)
+    if (!origin || allowedOrigins.includes(origin) || isVercelOrigin(origin)) return callback(null, true)
     return callback(new Error('Not allowed by CORS'))
   },
   credentials: true
